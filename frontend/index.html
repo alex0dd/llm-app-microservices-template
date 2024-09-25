@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iconic Sentence</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get an iconic sentence about Thailand</h1>
+    <button id="getSentenceBtn">Get Sentence</button>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('getSentenceBtn').addEventListener('click', function() {
+            fetch('/api/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerText = data.response;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('response').innerText = 'Error fetching data.';
+                });
+        });
+    </script>
+</body>
+</html>

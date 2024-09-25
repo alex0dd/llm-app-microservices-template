@@ -1,0 +1,53 @@
+networks:
+  shared_net:
+  backend_vllm_net: # network for backend and vllm_server communication
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    networks:
+      - shared_net
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    depends_on:
+      - backend
+      - frontend
+      - vllm_server
+  frontend:
+    build:
+      context: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - shared_net
+    depends_on:
+      - vllm_server
+      - backend
+  backend:
+    build:
+      context: backend
+    ports:
+      - "5192:5192"
+    networks:
+      - shared_net
+      - backend_vllm_net  # Network for backend-vllm communication
+    depends_on:
+      - vllm_server
+  vllm_server:
+    image: vllm/vllm-openai:latest
+    command: --model /mnt/model --dtype=half --max_model_len 8192
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./models/Meta-Llama-3.1-8B-Instruct:/mnt/model/"
+    networks:
+      - backend_vllm_net  # Only accessible by backend
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
