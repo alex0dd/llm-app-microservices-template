@@ -32,22 +32,19 @@ services:
       - "5192:5192"
     networks:
       - shared_net
-      - backend_llm_net  # Network for backend-vllm communication
+      - backend_llm_net  # Network for backend-llm communication
     depends_on:
-      - vllm_server
+      - llm_server
+    environment:
+      - LLM_SERVER_TYPE=ollama
   llm_server:
-    image: vllm/vllm-openai:latest
-    command: --model /mnt/model --dtype=half --max_model_len 8192
+    user: root
+    image: ollama/ollama:latest
+    entrypoint: /bin/sh /ollama/run_ollama.sh
     ports:
-      - "8000:8000"
+      - "11434:11434"
     volumes:
-      - "./models/Meta-Llama-3.1-8B-Instruct:/mnt/model/"
+      - "./ollama:/ollama"
+      - "~/.ollama/models:/root/.ollama/models"
     networks:
       - backend_llm_net  # Only accessible by backend
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]

@@ -38,19 +38,27 @@ Ensure you have the following installed:
 2. **Configure the environment**:
    - Download a huggingface checkpoint of the model (e.g., [Meta-Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct))
    - Place your the checkpoint directory in the `models/` directory.
-   - Ensure the `nginx.conf` file is correctly configured (especially the vllm_server section).
+   - Ensure the `nginx.conf` file is correctly configured (especially the llm_server section).
 
 3. **Build and start the services**:
 
+   With `vLLM`:
    ```bash
    docker-compose up --build
+   ```
+
+   With `ollama`:
+   ```bash
+   docker compose -f docker-compose-ollama.yaml up --build
+   
+   docker compose -f docker-compose-ollama.yaml up --build --force-recreate --remove-orphans
    ```
 
    This will build and start the following services:
    - `nginx`: Reverse proxy server
    - `frontend`: The web frontend, accessible via `http://localhost`
    - `backend`: The backend API server, accessible via `http://localhost/api`
-   - `vllm_server`: LLM serving engine, available for backend use, but not exposed to the public.
+   - `llm_server`: LLM serving engine, available for backend use, but not exposed to the public.
 
 4. **Access the application**:
    - **Frontend**: `http://localhost`
@@ -59,7 +67,7 @@ Ensure you have the following installed:
 ## Service Communication
 
 - The **frontend** sends requests to the **backend**.
-- The **backend** exposes the LLM via an API, communicates with the **vllm_server** for model inference.
+- The **backend** exposes the LLM via an API, communicates with the **llm_server** for model inference.
 
 - **nginx** handles routing for public requests (i.e., requests to the frontend and backend), but it does not expose the LLM server directly to the outside world.
 
@@ -68,7 +76,7 @@ Ensure you have the following installed:
 1. **Frontend**: Modify the source code in the `frontend/` folder according to your frontend framework.
 2. **Backend**: Implement your business logic in the `backend/` folder. Ensure it properly communicates with the LLM server.
 3. **LLM Model**: Replace the model in `models/` with the one you want to use (e.g., Meta-Llama-3.1-8B-Instruct).
-4. **LLM Server**: Replace the `vllm_server` section in the `docker-compose.yaml` file with other servers such as [ollama](https://ollama.com/).
+4. **LLM Server**: Replace the `llm_server` section in the `docker-compose.yaml` file with other servers such as [ollama](https://ollama.com/).
 
 ## License
 
