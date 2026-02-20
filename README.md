@@ -85,3 +85,7 @@ This project is licensed under the [MIT License](LICENSE).
 ## Contributions
 
 Feel free to fork this repository and make contributions.
+
+## Deployment
+
+[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostinger.com/web-apps-hosting)
